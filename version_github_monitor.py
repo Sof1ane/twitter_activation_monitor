@@ -5,16 +5,11 @@ from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
 import discord
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
 starttime = time.time()
 
-bearer_token = os.environ.get("BEARER_TOKEN")
-user_to_track = os.environ.get("user_to_track")
-
-discord_webhook = os.environ.get("discord_webhook")
+bearer_token = os.environ['BEARER_TOKEN']
+user_to_track = os.environ['user_to_track']
+discord_webhook = os.environ['discord_webhook']
 
 def create_url():
     # Specify the usernames that you want to lookup below
