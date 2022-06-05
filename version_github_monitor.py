@@ -1,10 +1,11 @@
 import requests
 import os
 import json
+import discord
 from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
-import discord
-import os
+
+
 starttime = time.time()
 
 bearer_token = os.environ['BEARER_TOKEN']
