@@ -64,7 +64,7 @@ def create_embed(name,username,img_url,description,followers_count,following_cou
     if description:
         embed.add_field(name="Description", value="{}".format(description), inline=False)
     if location:
-        embed.add_field(name="Localisation, value={}.format(location))
+        embed.add_field(name="Localisation", value={}.format(location))
     embed.add_field(name="ID", value="{}".format(id), inline=False)
     webhook = Webhook.from_url(discord_webhook, adapter=RequestsWebhookAdapter())
     webhook.send(embed = embed)
