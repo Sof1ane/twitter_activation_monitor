@@ -1,4 +1,4 @@
-# twitter_activation_monitor
+# Twitter Reactivation Monitor, Bearer Auth Mode
 
 Simple script to send Discord notifications as soon as someone reactivates his account. You can changes fields that appears in the Discord Embed if you want to make it lighter or not.
 
