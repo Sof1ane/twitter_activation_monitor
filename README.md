@@ -4,11 +4,11 @@ Simple script to send Discord notifications as soon as someone reactivates his a
 
 # What to update in code ? 
 
-Username : change it to the one you wanna monitor.
+Username : Change it to the one you wanna monitor.
 
 Bearer token : Change it to your twitter bearer token. Get it [here](https://developer.twitter.com/en/portal/dashboard) .
 
-Discord webhook : Change it to you discord webhook of the channel you want updates to appear. See tutorial [here](https://help.dashe.io/en/articles/2521940-how-to-create-a-discord-webhook-url)
+Discord webhook : Change it to you discord webhook of the channel you want updates to appear. See tutorial [here](https://help.dashe.io/en/articles/2521940-how-to-create-a-discord-webhook-url) .
 
 # Whats next ?
 
