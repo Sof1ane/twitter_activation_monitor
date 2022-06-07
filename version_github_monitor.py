@@ -89,4 +89,4 @@ def main():
 
 while True:
     main()
-    time.sleep(15.0 - ((time.time() - starttime) % 15.0))
+    time.sleep(25.0 - ((time.time() - starttime) % 25.0))
