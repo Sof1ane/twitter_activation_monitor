@@ -9,8 +9,8 @@ import time
 starttime = time.time()
 
 bearer_token = str(os.environ['BEARER_TOKEN'])
-user_to_track = str(os.environ['user_to_track'])
-discord_webhook = str(os.environ['discord_webhook'])
+user_to_track = str(os.environ['USER_TO_TRACK'])
+discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
 
 def create_url():
     # Specify the usernames that you want to lookup below
