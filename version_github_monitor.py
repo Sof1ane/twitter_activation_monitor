@@ -4,6 +4,9 @@ import json
 import discord
 from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 starttime = time.time()
 
