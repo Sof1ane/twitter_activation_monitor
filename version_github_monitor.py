@@ -75,19 +75,37 @@ def main():
     response = connect_to_endpoint(url)
     json_response = connect_to_endpoint(url).json()
     num_accounts = response.text.count("profile_image_url")
-    for i in range(0,num_accounts):
+    if num_accounts == 1:
         if response.text[2:6] == "data":
-            name = json_response["data"][i]["name"]
-            username = json_response["data"][i]["username"]
-            img_url = json_response["data"][i]["profile_image_url"]
-            description = json_response["data"][i]["description"]
-            followers_count = json_response["data"][i]["public_metrics"]['followers_count']
-            following_count = json_response["data"][i]["public_metrics"]['following_count']
-            tweet_count = json_response["data"][i]["public_metrics"]['tweet_count']
-            is_protected = json_response["data"][i]["protected"]
-            creation_date = json_response["data"][i]["created_at"]
-            location = json_response["data"][i]["location"]
-            id = json_response["data"][i]["id"]
+            name = json_response["data"][0]["name"]
+            username = json_response["data"][0]["username"]
+            img_url = json_response["data"][0]["profile_image_url"]
+            description = json_response["data"][0]["description"]
+            followers_count = json_response["data"][0]["public_metrics"]['followers_count']
+            following_count = json_response["data"][0]["public_metrics"]['following_count']
+            tweet_count = json_response["data"][0]["public_metrics"]['tweet_count']
+            is_protected = json_response["data"][0]["protected"]
+            creation_date = json_response["data"][0]["created_at"]
+            location = json_response["data"][0]["location"]
+            id = json_response["data"][0]["id"]
 
             create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id,location)
+    
+    
+    else:  
+        for i in range(0,num_accounts):
+            if response.text[2:6] == "data":
+                name = json_response["data"][i]["name"]
+                username = json_response["data"][i]["username"]
+                img_url = json_response["data"][i]["profile_image_url"]
+                description = json_response["data"][i]["description"]
+                followers_count = json_response["data"][i]["public_metrics"]['followers_count']
+                following_count = json_response["data"][i]["public_metrics"]['following_count']
+                tweet_count = json_response["data"][i]["public_metrics"]['tweet_count']
+                is_protected = json_response["data"][i]["protected"]
+                creation_date = json_response["data"][i]["created_at"]
+                location = json_response["data"][i]["location"]
+                id = json_response["data"][i]["id"]
+
+                create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id,location)
 
