@@ -5,24 +5,25 @@ import discord
 from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
 
-
 starttime = time.time()
 
 bearer_token = str(os.environ['BEARER_TOKEN'])
-user_to_track = str(os.environ['user_to_track'])
-discord_webhook = str(os.environ['discord_webhook'])
+user_to_track = str(os.environ['USER_TO_TRACK'])
+discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
+
 
 def create_url():
     # Specify the usernames that you want to lookup below
     # You can enter up to 100 comma-separated values.
     usernames = "usernames={}".format(user_to_track)
-    user_fields = "user.fields=description,created_at,name,profile_image_url,protected,url,public_metrics"
+    user_fields = "user.fields=description,created_at,name,profile_image_url,protected,url,public_metrics,location"
     # User fields are adjustable, options include:
     # created_at, description, entities, id, location, name,
     # pinned_tweet_id, profile_image_url, protected,
     # public_metrics, url, username, verified, and withheld
     url = "https://api.twitter.com/2/users/by?{}&{}".format(usernames, user_fields)
     return url
+
 
 
 def bearer_oauth(r):
@@ -46,7 +47,7 @@ def connect_to_endpoint(url):
     return response
 
 
-def create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id):
+def create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id, location):
 
     #### Create the initial embed object ####
     embed = discord.Embed(title="{} is live".format(username), url="https://twitter.com/{}".format(username), color=0x109319)
@@ -56,14 +57,16 @@ def create_embed(name,username,img_url,description,followers_count,following_cou
 
     embed.set_thumbnail(url="{}".format(img_url))
 
-    embed.add_field(name="Followers", value="{}".format(followers_count), inline=False)
-    embed.add_field(name="Followings", value="{}".format(following_count), inline=False)
-    embed.add_field(name="Tweets", value="{}".format(tweet_count), inline=False)
-    embed.add_field(name="Protected ?", value="{}".format(is_protected), inline=False)
-    embed.add_field(name="Creation_date", value="{}".format(creation_date), inline=False)
+    embed.add_field(name="Followers", value="{}".format(followers_count))
+    embed.add_field(name="Followings", value="{}".format(following_count))
+    embed.add_field(name="Tweets", value="{}".format(tweet_count))
+    embed.add_field(name="Protected ?", value="{}".format(is_protected))
+    embed.add_field(name="Creation_date", value="{}".format(creation_date))
     if description:
-        embed.add_field(name="Description", value="{}".format(description), inline=False)
-    embed.add_field(name="ID", value="{}".format(id), inline=False)
+        embed.add_field(name="Description", value="{}".format(description))
+    if location: 
+        embed.add_field(name="Localisation", value="{}".format(location))
+    embed.add_field(name="ID", value="{}".format(id))
     webhook = Webhook.from_url(discord_webhook, adapter=RequestsWebhookAdapter())
     webhook.send(embed = embed)
 
@@ -71,22 +74,20 @@ def main():
     url = create_url()
     response = connect_to_endpoint(url)
     json_response = connect_to_endpoint(url).json()
-    if response.text[2:6] == "data":
-        name = json_response["data"][0]["name"]
-        username = json_response["data"][0]["username"]
-        img_url = json_response["data"][0]["profile_image_url"]
-        description = json_response["data"][0]["description"]
-        followers_count = json_response["data"][0]["public_metrics"]['followers_count']
-        following_count = json_response["data"][0]["public_metrics"]['following_count']
-        tweet_count = json_response["data"][0]["public_metrics"]['tweet_count']
-        is_protected = json_response["data"][0]["protected"]
-        creation_date = json_response["data"][0]["created_at"]
-        id = json_response["data"][0]["id"]
+    num_accounts = response.text.count("profile_image_url")
+    for i in range(0,num_accounts):
+        if response.text[2:6] == "data":
+            name = json_response["data"][i]["name"]
+            username = json_response["data"][i]["username"]
+            img_url = json_response["data"][i]["profile_image_url"]
+            description = json_response["data"][i]["description"]
+            followers_count = json_response["data"][i]["public_metrics"]['followers_count']
+            following_count = json_response["data"][i]["public_metrics"]['following_count']
+            tweet_count = json_response["data"][i]["public_metrics"]['tweet_count']
+            is_protected = json_response["data"][i]["protected"]
+            creation_date = json_response["data"][i]["created_at"]
+            location = json_response["data"][i]["location"]
+            id = json_response["data"][i]["id"]
 
-        create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id)
+            create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id,location)
 
-
-
-while True:
-    main()
-    time.sleep(45.0 - ((time.time() - starttime) % 45.0))
