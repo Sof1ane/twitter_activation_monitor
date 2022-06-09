@@ -4,16 +4,23 @@ import json
 import discord
 from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
+
+
+# If you want to run local with .env variables
+
 from dotenv import load_dotenv
 
 load_dotenv()
-
-starttime = time.time()
 
 bearer_token = str(os.environ['BEARER_TOKEN'])
 user_to_track = str(os.environ['USER_TO_TRACK'])
 discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
 
+# start time used for the loop
+
+starttime = time.time()
+
+# Create the url with the users you chosed and the fields you want the api to return
 
 def create_url():
     # Specify the usernames that you want to lookup below
@@ -78,7 +85,7 @@ def main():
     response = connect_to_endpoint(url)
     json_response = connect_to_endpoint(url).json()
     num_accounts = response.text.count("profile_image_url")
-    for i in range(0,num_accounts):
+    for i in range(num_accounts):
         if response.text[2:6] == "data":
             name = json_response["data"][i]["name"]
             username = json_response["data"][i]["username"]
@@ -93,4 +100,7 @@ def main():
             id = json_response["data"][i]["id"]
 
             create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id,location)
-
+            
+while True:
+    main()
+    time.sleep(25.0 - ((time.time() - starttime) % 25.0))
