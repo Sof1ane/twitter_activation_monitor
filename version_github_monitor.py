@@ -90,3 +90,7 @@ def main():
             id = json_response["data"][i]["id"]
 
             create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id,location)
+            
+while True:
+    main()
+    time.sleep(25.0 - ((time.time() - starttime) % 25.0))
