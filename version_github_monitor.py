@@ -75,7 +75,7 @@ def main():
     response = connect_to_endpoint(url)
     json_response = connect_to_endpoint(url).json()
     num_accounts = response.text.count("profile_image_url")
-    for i in range(0,num_accounts):
+    for i in range(num_accounts-1):
         if response.text[2:6] == "data":
             name = json_response["data"][i]["name"]
             username = json_response["data"][i]["username"]
