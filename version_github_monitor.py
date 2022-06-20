@@ -57,7 +57,7 @@ def connect_to_endpoint(url):
     return response
 
 
-def create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id):
+def create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id, location):
 
     #### Create the initial embed object ####
     embed = discord.Embed(title="{} is live".format(username), url="https://twitter.com/{}".format(username), color=0x109319)
@@ -74,6 +74,8 @@ def create_embed(name,username,img_url,description,followers_count,following_cou
     embed.add_field(name="Creation_date", value="{}".format(creation_date))
     if description:
         embed.add_field(name="Description", value="{}".format(description))
+    if location: 
+        embed.add_field(name="Localisation", value="{}".format(location))
     embed.add_field(name="ID", value="{}".format(id))
     webhook = Webhook.from_url(discord_webhook, adapter=RequestsWebhookAdapter())
     webhook.send(embed = embed)
@@ -94,9 +96,10 @@ def main():
             tweet_count = json_response["data"][i]["public_metrics"]['tweet_count']
             is_protected = json_response["data"][i]["protected"]
             creation_date = json_response["data"][i]["created_at"]
+            location = json_response["data"][i]["location"]
             id = json_response["data"][i]["id"]
 
-            create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id)
+            create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id,location)
             
 while True:
     main()
