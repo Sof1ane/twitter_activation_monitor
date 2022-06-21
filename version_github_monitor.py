@@ -9,6 +9,8 @@ bearer_token = str(os.environ['BEARER_TOKEN'])
 user_to_track = str(os.environ['USER_TO_TRACK'])
 discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
 
+first_harvest = []
+second_harvest = []
 # start time used for the loop
 
 starttime = time.time()
@@ -70,30 +72,48 @@ def create_embed(name,username,img_url,description,followers_count,following_cou
     if location: 
         embed.add_field(name="Localisation", value="{}".format(location))
     embed.add_field(name="ID", value="{}".format(id))
+    return embed
+
+
+
+def send_embed(response):
+
+    json_response= embed.json()
+
+    name = json_response["data"][i]["name"]
+    username = json_response["data"][i]["username"]
+    img_url = json_response["data"][i]["profile_image_url"]
+    description = json_response["data"][i]["description"]
+    followers_count = json_response["data"][i]["public_metrics"]['followers_count']
+    following_count = json_response["data"][i]["public_metrics"]['following_count']
+    tweet_count = json_response["data"][i]["public_metrics"]['tweet_count']
+    is_protected = json_response["data"][i]["protected"]
+    creation_date = json_response["data"][i]["created_at"]
+    location = json_response["data"][i]["location"]
+    id = json_response["data"][i]["id"]
+
+
     webhook = Webhook.from_url(discord_webhook, adapter=RequestsWebhookAdapter())
     webhook.send(embed = embed)
 
-def main():
+def harvest_data():
     url = create_url()
     response = connect_to_endpoint(url)
-    json_response = connect_to_endpoint(url).json()
-    num_accounts = response.text.count("profile_image_url")
-    for i in range(num_accounts):
-        if response.text[2:6] == "data":
-            name = json_response["data"][i]["name"]
-            username = json_response["data"][i]["username"]
-            img_url = json_response["data"][i]["profile_image_url"]
-            description = json_response["data"][i]["description"]
-            followers_count = json_response["data"][i]["public_metrics"]['followers_count']
-            following_count = json_response["data"][i]["public_metrics"]['following_count']
-            tweet_count = json_response["data"][i]["public_metrics"]['tweet_count']
-            is_protected = json_response["data"][i]["protected"]
-            creation_date = json_response["data"][i]["created_at"]
-            location = json_response["data"][i]["location"]
-            id = json_response["data"][i]["id"]
+    
+    # embed_1 = create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id,location)
+    return response
 
-            create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id,location)
-            
+
+# def main():
+    
+#     send_embed(embed_to_send)
+
 while True:
-    main()
+    first_harvest = harvest_data()
     time.sleep(25.0 - ((time.time() - starttime) % 25.0))
+    second_harvest = harvest_data()
+    if second_harvest.text[2:6] == "data":
+        if first_harvest.text[2:6] == "data":
+            if second_harvest != first_harvest:
+                temp = create_embed(second_harvest)
+                send_embed(temp)
