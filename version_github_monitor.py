@@ -63,9 +63,9 @@ def create_embed(name,username,img_url,description,followers_count,following_cou
     embed = discord.Embed(title="{} is live".format(username), url="https://twitter.com/{}".format(username), color=0x109319)
 
     # Add author, thumbnail, fields, and footer to the embed
-    embed.set_author(name="{}".format(name), url="https://twitter.com/{}".format(username), icon_url="{}".format(img_url))
+    embed.set_author(name="{}".format(name), url="https://twitter.com/{}".format(username), icon_url="{}".format(img_url.replace("normal", "400x400")))
 
-    embed.set_thumbnail(url="{}".format(img_url))
+    embed.set_thumbnail(url="{}".format(img_url.replace("normal", "400x400")))
 
     embed.add_field(name="Followers", value="{}".format(followers_count))
     embed.add_field(name="Followings", value="{}".format(following_count))
