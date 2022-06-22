@@ -21,7 +21,7 @@ def create_url():
     # Specify the usernames that you want to lookup below
     # You can enter up to 100 comma-separated values.
     usernames = "usernames={}".format(user_to_track)
-    user_fields = "user.fields=description,created_at,name,profile_image_url,protected,url,public_metrics,location"
+    user_fields = "user.fields=description,created_at,name,profile_image_url,protected,url,public_metrics,location,url"
     # User fields are adjustable, options include:
     # created_at, description, entities, id, location, name,
     # pinned_tweet_id, profile_image_url, protected,
@@ -52,7 +52,7 @@ def connect_to_endpoint(url):
     return response
 
 
-def create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id, location):
+def create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id, location,url):
 
     #### Create the initial embed object ####
     embed = discord.Embed(title="{} is live".format(username), url="https://twitter.com/{}".format(username), color=0x109319)
@@ -71,6 +71,8 @@ def create_embed(name,username,img_url,description,followers_count,following_cou
         embed.add_field(name="Description", value="{}".format(description))
     if location: 
         embed.add_field(name="Localisation", value="{}".format(location))
+    if url:
+        embed.add_field(name="URL", value="{}".format(url))
     embed.add_field(name="ID", value="{}".format(id))
     return embed
 
@@ -91,7 +93,7 @@ def send_embed(response):
     creation_date = json_response["data"][i]["created_at"]
     location = json_response["data"][i]["location"]
     id = json_response["data"][i]["id"]
-
+    url = json_response["data"][i]["url"]
 
     webhook = Webhook.from_url(discord_webhook, adapter=RequestsWebhookAdapter())
     webhook.send(embed = embed)
