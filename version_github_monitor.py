@@ -57,17 +57,7 @@ def connect_to_endpoint(url):
 
 def send_embed(temp):
     
-    name = temp["data"][0]["name"]
-    username = temp["data"][0]["username"]
-    img_url = temp["data"][0]["profile_image_url"]
-    description = temp["data"][0]["description"]
-    followers_count = temp["data"][0]["public_metrics"]['followers_count']
-    following_count = temp["data"][0]["public_metrics"]['following_count']
-    tweet_count = temp["data"][0]["public_metrics"]['tweet_count']
-    is_protected = temp["data"][0]["protected"]
-    creation_date = temp["data"][0]["created_at"]
-    id = temp["data"][0]["id"]
-    url = temp["data"][0]["url"]
+    
 
     #### Create the initial embed object ####
     embed = discord.Embed(title="{} is live".format(temp[1]), url="https://twitter.com/{}".format(temp[1]), color=0x109319)
@@ -94,12 +84,23 @@ def send_embed(temp):
 
 
 
-def create_json(response):
+def create_dict(response):
 
-    json_response= response.json()
-
-    
-    return (json_response)
+    temp= response.json()
+    dict = {
+    "name" : temp["data"][0]["name"],
+    "username" : temp["data"][0]["username"],
+    "img_url" : temp["data"][0]["profile_image_url"],
+    "description" : temp["data"][0]["description"],
+    "followers_count" : temp["data"][0]["public_metrics"]['followers_count'],
+    "following_count" : temp["data"][0]["public_metrics"]['following_count'],
+    "tweet_count" : temp["data"][0]["public_metrics"]['tweet_count'],
+    "is_protected" : temp["data"][0]["protected"],
+    "creation_date" : temp["data"][0]["created_at"],
+    "id" : temp["data"][0]["id"],
+    "url" : temp["data"][0]["url"],
+    }
+    return (dict)
 
     
 def harvest_data():
@@ -107,20 +108,29 @@ def harvest_data():
     response = connect_to_endpoint(url)
     
     # embed_1 = create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id)
-    return response.json()
-
+    return response
 
 # def main():
     
 #     send_embed(embed_to_send)
 
 while True:
-    first_harvest = harvest_data()
+    
+    temp_harvest = harvest_data()
+    
+    if temp_harvest.text[2:6] == ["data"]:
+        first_harvest = create_dict()
+        
     time.sleep(25.0 - ((time.time() - starttime) % 25.0))
-    second_harvest = harvest_data()
+    
+    temp_harvest = harvest_data()
+    
+    if temp_harvest.text[2:6] == ["data"]:
+        second_harvest = create_dict(harvest_data())
+        
     if second_harvest.text[2:6] == "data":
         if first_harvest.text[2:6] == "data":
-            if second_harvest.text != first_harvest.text:
-                temp = create_json(second_harvest)
+            if second_harvest != first_harvest:
+                temp = create_dict(second_harvest)
                 send_embed(temp)
                 
