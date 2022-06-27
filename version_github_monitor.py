@@ -4,12 +4,9 @@ import json
 import discord
 from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
-# from dotenv import load_dotenv
-
-# load_dotenv()
 
 bearer_token = str(os.environ['BEARER_TOKEN'])
-user_to_track = str(os.environ['USER_TO_TRACK'])
+user_to_track = (os.environ['USER_TO_TRACK'])
 discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
 
 first_harvest = []
@@ -88,8 +85,7 @@ def harvest_data():
 
     temp= response.json()
 
-    is_activated = []
-    if response.text[2:6] == ["data"]:
+    if response.text[2:6] == "data":
 
         dict = {
         'is_activated':False,
@@ -132,13 +128,19 @@ def harvest_data():
     
 #     send_embed(embed_to_send)
 
+                
+
 while True:
     
     first_harvest = harvest_data()
-        
+    
+    
     time.sleep(25.0 - ((time.time() - starttime) % 25.0))
     
+    
+    
     second_harvest = harvest_data()
+    
     if second_harvest != first_harvest:
         send_embed(second_harvest)
-                
+        
