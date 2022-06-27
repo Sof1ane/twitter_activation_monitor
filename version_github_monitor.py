@@ -55,60 +55,78 @@ def connect_to_endpoint(url):
     return response
 
 
-def send_embed(temp):
+def send_embed(harvest):
     
     
 
     #### Create the initial embed object ####
-    embed = discord.Embed(title="{} is live".format(temp[1]), url="https://twitter.com/{}".format(temp[1]), color=0x109319)
+    embed = discord.Embed(title="{} is live".format(harvest['username']), url="https://twitter.com/{}".format(harvest['username']), color=0x109319)
 
     # Add author, thumbnail, fields, and footer to the embed
-    embed.set_author(name="{}".format(temp[0]), url="https://twitter.com/{}".format(temp[1]), icon_url="{}".format(temp[2].replace("normal", "400x400")))
+    embed.set_author(name="{}".format(harvest['username']), url="https://twitter.com/{}".format(harvest['username']), icon_url="{}".format(harvest['img_url'].replace("normal", "400x400")))
 
-    embed.set_thumbnail(url="{}".format(temp[2].replace("normal", "400x400")))
+    embed.set_thumbnail(url="{}".format(harvest['img_url'].replace("normal", "400x400")))
 
-    embed.add_field(name="Followers", value="{}".format(temp[4]))
-    embed.add_field(name="Followings", value="{}".format(temp[5]))
-    embed.add_field(name="Tweets", value="{}".format(temp[6]))
-    embed.add_field(name="Protected ?", value="{}".format(temp[7]))
-    embed.add_field(name="Creation_date", value="{}".format(temp[8]))
-    if temp[3]:
-        embed.add_field(name="Description", value="{}".format(temp[3]))
-    if temp[10]:
-        embed.add_field(name="URL", value="{}".format(temp[10]))
-    embed.add_field(name="ID", value="{}".format(temp[9]))
+    embed.add_field(name="Followers", value="{}".format(harvest['followers_count']))
+    embed.add_field(name="Followings", value="{}".format(harvest['following_count']))
+    embed.add_field(name="Tweets", value="{}".format(harvest['tweet_count']))
+    embed.add_field(name="Protected ?", value="{}".format(harvest['is_protected']))
+    embed.add_field(name="Creation_date", value="{}".format(harvest['creation_date']))
+    embed.add_field(name="Description", value="{}".format(harvest['description']))
+    embed.add_field(name="URL", value="{}".format(harvest['url']))
+    embed.add_field(name="ID", value="{}".format(harvest['id']))
     
     webhook = Webhook.from_url(discord_webhook, adapter=RequestsWebhookAdapter())
     webhook.send(embed = embed)
 
-
-
-
-def create_dict(response):
-
-    temp= response.json()
-    dict = {
-    "name" : temp["data"][0]["name"],
-    "username" : temp["data"][0]["username"],
-    "img_url" : temp["data"][0]["profile_image_url"],
-    "description" : temp["data"][0]["description"],
-    "followers_count" : temp["data"][0]["public_metrics"]['followers_count'],
-    "following_count" : temp["data"][0]["public_metrics"]['following_count'],
-    "tweet_count" : temp["data"][0]["public_metrics"]['tweet_count'],
-    "is_protected" : temp["data"][0]["protected"],
-    "creation_date" : temp["data"][0]["created_at"],
-    "id" : temp["data"][0]["id"],
-    "url" : temp["data"][0]["url"],
-    }
-    return (dict)
-
     
 def harvest_data():
+
     url = create_url()
+
     response = connect_to_endpoint(url)
+
+    temp= response.json()
+
+    is_activated = []
+    if response.text[2:6] == ["data"]:
+
+        dict = {
+        'is_activated':False,
+        "name" : temp["data"][0]["name"],
+        "username" : temp["data"][0]["username"],
+        "img_url" : temp["data"][0]["profile_image_url"],
+        "description" : temp["data"][0]["description"],
+        "followers_count" : temp["data"][0]["public_metrics"]['followers_count'],
+        "following_count" : temp["data"][0]["public_metrics"]['following_count'],
+        "tweet_count" : temp["data"][0]["public_metrics"]['tweet_count'],
+        "is_protected" : temp["data"][0]["protected"],
+        "creation_date" : temp["data"][0]["created_at"],
+        "id" : temp["data"][0]["id"],
+        "url" : temp["data"][0]["url"],
+        }
+        return (dict)
+
+    else:
+        
+        dict = {
+        'is_activated':False,
+        "name" : '',
+        "username" : '',
+        "img_url" : '',
+        "description" : '',
+        "followers_count" : '',
+        "following_count" : '',
+        "tweet_count" : '',
+        "is_protected" : '',
+        "creation_date" : '',
+        "id" : '',
+        "url" : '',
+        }
+        return (dict)
+
+
     
-    # embed_1 = create_embed(name,username,img_url,description,followers_count,following_count,tweet_count,is_protected,creation_date,id)
-    return response
 
 # def main():
     
@@ -116,21 +134,11 @@ def harvest_data():
 
 while True:
     
-    temp_harvest = harvest_data()
-    
-    if temp_harvest.text[2:6] == ["data"]:
-        first_harvest = create_dict()
+    first_harvest = harvest_data()
         
     time.sleep(25.0 - ((time.time() - starttime) % 25.0))
     
-    temp_harvest = harvest_data()
-    
-    if temp_harvest.text[2:6] == ["data"]:
-        second_harvest = create_dict(harvest_data())
-        
-    if second_harvest.text[2:6] == "data":
-        if first_harvest.text[2:6] == "data":
-            if second_harvest != first_harvest:
-                temp = create_dict(second_harvest)
-                send_embed(temp)
+    second_harvest = harvest_data()
+    if second_harvest != first_harvest:
+        send_embed(second_harvest)
                 
