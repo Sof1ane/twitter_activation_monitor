@@ -4,9 +4,9 @@ import json
 import discord
 from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 bearer_token = str(os.environ['BEARER_TOKEN'])
 user_to_track = str(os.environ['USER_TO_TRACK'])
