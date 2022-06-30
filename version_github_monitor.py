@@ -5,8 +5,10 @@ import discord
 from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
 
+
+
 bearer_token = str(os.environ['BEARER_TOKEN'])
-user_to_track = (os.environ['USER_TO_TRACK'])
+user_to_track = str(os.environ['USER_TO_TRACK'])
 discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
 
 first_harvest = []
@@ -21,7 +23,7 @@ def create_url():
     # Specify the usernames that you want to lookup below
     # You can enter up to 100 comma-separated values.
     usernames = "usernames={}".format(user_to_track)
-    user_fields = "user.fields=description,created_at,name,profile_image_url,protected,url,public_metrics,location,url"
+    user_fields = "user.fields=description,created_at,name,profile_image_url,protected,public_metrics,location,url"
     # User fields are adjustable, options include:
     # created_at, description, entities, id, location, name,
     # pinned_tweet_id, profile_image_url, protected,
@@ -57,7 +59,7 @@ def send_embed(harvest):
     
 
     #### Create the initial embed object ####
-    embed = discord.Embed(title="{} is live".format(harvest['username']), url="https://twitter.com/{}".format(harvest['username']), color=0x109319)
+    embed = discord.Embed(title="New change detected on {}".format(harvest['username']), url="https://twitter.com/{}".format(harvest['username']), color=0x109319)
 
     # Add author, thumbnail, fields, and footer to the embed
     embed.set_author(name="{}".format(harvest['username']), url="https://twitter.com/{}".format(harvest['username']), icon_url="{}".format(harvest['img_url'].replace("normal", "400x400")))
@@ -92,15 +94,33 @@ def harvest_data():
         "name" : temp["data"][0]["name"],
         "username" : temp["data"][0]["username"],
         "img_url" : temp["data"][0]["profile_image_url"],
-        "description" : temp["data"][0]["description"],
         "followers_count" : temp["data"][0]["public_metrics"]['followers_count'],
         "following_count" : temp["data"][0]["public_metrics"]['following_count'],
         "tweet_count" : temp["data"][0]["public_metrics"]['tweet_count'],
         "is_protected" : temp["data"][0]["protected"],
         "creation_date" : temp["data"][0]["created_at"],
         "id" : temp["data"][0]["id"],
-        "url" : temp["data"][0]["url"],
         }
+        
+        if temp["data"][0]["description"] :
+            dict['description'] = temp["data"][0]["description"]
+        
+        else:
+            dict['description'] = 'vide'
+            
+        if 'location' in response.text :
+            dict['location'] = temp["data"][0]["location"]
+            
+        else:
+            dict['location'] = 'vide'
+            
+        if temp["data"][0]["url"] :
+            dict['url'] = temp["data"][0]["url"]
+            
+        else:
+            dict['url'] = 'vide'
+            
+            
         return (dict)
 
     else:
