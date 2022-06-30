@@ -135,7 +135,7 @@ while True:
     first_harvest = harvest_data()
     
     
-    time.sleep(25.0 - ((time.time() - starttime) % 25.0))
+    time.sleep(5.0 - ((time.time() - starttime) % 5.0))
     
     
     
