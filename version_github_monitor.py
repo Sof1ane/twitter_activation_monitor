@@ -31,9 +31,9 @@ starttime = time.time()
 
 client = pymongo.MongoClient(connection_string)
 
-db = client[db_name]
+db = client.db_name
 
-collection = db[collection_name]
+collection = db.collection_name
 
 
 # Create the url with the users you chosed and the fields you want the api to return
