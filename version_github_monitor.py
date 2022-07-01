@@ -98,7 +98,7 @@ def harvest_data():
     if response.text[2:6] == "data":
 
         dict = {
-        'is_activated':False,
+        'is_activated':True,
         "name" : temp["data"][0]["name"],
         "username" : temp["data"][0]["username"],
         "img_url" : temp["data"][0]["profile_image_url"],
@@ -136,7 +136,7 @@ def harvest_data():
         dict = {
         'is_activated':False,
         "name" : '',
-        "username" : '',
+        "username" : ' ',
         "img_url" : '',
         "description" : '',
         "followers_count" : '',
