@@ -4,18 +4,26 @@ import json
 import discord
 from discord import Webhook, RequestsWebhookAdapter, Embed
 import time
-
+from pymongo import MongoClient
 
 
 bearer_token = str(os.environ['BEARER_TOKEN'])
 user_to_track = str(os.environ['USER_TO_TRACK'])
 discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
+mongo_password = str(os.environ['MONGO_PASSWORD'])
 
 first_harvest = []
 second_harvest = []
 # start time used for the loop
 
 starttime = time.time()
+
+# Create connection to MongoDB
+client = pymongo.MongoClient("mongodb+srv://sofianejetski:{}@cluster0.p3ki8.mongodb.net/?retryWrites=true&w=majority".format(mongo_password))
+
+db = client['twitter_logs']
+collection = db['account_1']
+
 
 # Create the url with the users you chosed and the fields you want the api to return
 
@@ -142,7 +150,10 @@ def harvest_data():
         return (dict)
 
 
-    
+def send_to_db(d):
+
+    collection.insert(d)
+
 
 # def main():
     
@@ -163,4 +174,5 @@ while True:
     
     if second_harvest != first_harvest:
         send_embed(second_harvest)
+        send_to_db(second_harvest)
         
