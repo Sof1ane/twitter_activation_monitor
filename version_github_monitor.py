@@ -14,6 +14,7 @@ mongo_password = str(os.environ['MONGO_PASSWORD'])
 
 first_harvest = []
 second_harvest = []
+
 # start time used for the loop
 
 starttime = time.time()
@@ -62,11 +63,15 @@ def connect_to_endpoint(url):
     return response
 
 
+
+
+
 def send_embed(harvest):
     
-    
+    # Embed example, you can modify fields, depending of the one you called in the API
 
     #### Create the initial embed object ####
+
     embed = discord.Embed(title="New change detected on {}".format(harvest['username']), url="https://twitter.com/{}".format(harvest['username']), color=0x109319)
 
     # Add author, thumbnail, fields, and footer to the embed
@@ -95,6 +100,9 @@ def harvest_data():
 
     temp= response.json()
 
+
+    # Confirm if response harvested is an account
+
     if response.text[2:6] == "data":
 
         dict = {
@@ -108,6 +116,7 @@ def harvest_data():
         "is_protected" : temp["data"][0]["protected"],
         "creation_date" : temp["data"][0]["created_at"],
         "id" : temp["data"][0]["id"],
+        "time" : str(time.time())
         }
         
         if temp["data"][0]["description"] :
@@ -152,14 +161,7 @@ def harvest_data():
 
 def send_to_db(d):
 
-    collection.insert(d)
-
-
-# def main():
-    
-#     send_embed(embed_to_send)
-
-                
+    collection.insert(d)              
 
 while True:
     
