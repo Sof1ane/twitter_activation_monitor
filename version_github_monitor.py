@@ -10,7 +10,7 @@ from pymongo import MongoClient
 bearer_token = str(os.environ['BEARER_TOKEN'])
 user_to_track = str(os.environ['USER_TO_TRACK'])
 discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
-mongo_password = str(os.environ['MONGO_PASSWORD'])
+connection_string = str(os.environ['CONNECTION_STRING'])
 
 first_harvest = []
 second_harvest = []
@@ -20,10 +20,10 @@ second_harvest = []
 starttime = time.time()
 
 # Create connection to MongoDB
-client = pymongo.MongoClient("mongodb+srv://sofianejetski:{}@cluster0.p3ki8.mongodb.net/?retryWrites=true&w=majority".format(mongo_password))
+client = pymongo.MongoClient(connection_string)
 
-db = client['twitter_logs']
-collection = db['account_1']
+db = client[db_name]
+collection = db[collection_name]
 
 
 # Create the url with the users you chosed and the fields you want the api to return
