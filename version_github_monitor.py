@@ -10,7 +10,15 @@ from pymongo import MongoClient
 bearer_token = str(os.environ['BEARER_TOKEN'])
 user_to_track = str(os.environ['USER_TO_TRACK'])
 discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
+
+## IF YOU WANT TO USE MONGODB TO STORE DATA
+
 connection_string = str(os.environ['CONNECTION_STRING'])
+db_name = str(os.environ['DB_NAME'])
+collection_name = str(os.environ['COLLECTION_NAME'])
+
+
+# We'll store the 2 harvested dictionnaries here to compare them 
 
 first_harvest = []
 second_harvest = []
@@ -20,9 +28,11 @@ second_harvest = []
 starttime = time.time()
 
 # Create connection to MongoDB
+
 client = pymongo.MongoClient(connection_string)
 
 db = client[db_name]
+
 collection = db[collection_name]
 
 
@@ -119,6 +129,8 @@ def harvest_data():
         "time" : str(time.time())
         }
         
+        # Dealing with values that could be left empty, example : bio, link, location
+
         if temp["data"][0]["description"] :
             dict['description'] = temp["data"][0]["description"]
         
@@ -144,17 +156,18 @@ def harvest_data():
         
         dict = {
         'is_activated':False,
-        "name" : '',
+        "name" : ' ',
         "username" : ' ',
-        "img_url" : '',
-        "description" : '',
-        "followers_count" : '',
-        "following_count" : '',
-        "tweet_count" : '',
-        "is_protected" : '',
-        "creation_date" : '',
-        "id" : '',
-        "url" : '',
+        "img_url" : ' ',
+        "description" : ' ',
+        "followers_count" : ' ',
+        "following_count" : ' ',
+        "tweet_count" : ' ',
+        "is_protected" : ' ',
+        "creation_date" : ' ',
+        "id" : ' ',
+        "url" : ' ',
+        "time" : str(time.time())
         }
         return (dict)
 
