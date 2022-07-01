@@ -126,7 +126,6 @@ def harvest_data():
         "is_protected" : temp["data"][0]["protected"],
         "creation_date" : temp["data"][0]["created_at"],
         "id" : temp["data"][0]["id"],
-        "time" : str(time.time())
         }
         
         # Dealing with values that could be left empty, example : bio, link, location
@@ -167,7 +166,6 @@ def harvest_data():
         "creation_date" : ' ',
         "id" : ' ',
         "url" : ' ',
-        "time" : str(time.time())
         }
         return (dict)
 
@@ -188,6 +186,12 @@ while True:
     second_harvest = harvest_data()
     
     if second_harvest != first_harvest:
+
+        # Add time
+        temp_d = second_harvest
+
+        temp_d['time'] = str(time.time())
+
         send_embed(second_harvest)
-        send_to_db(second_harvest)
+        send_to_db(temp_d)
         
