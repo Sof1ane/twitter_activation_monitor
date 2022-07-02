@@ -175,9 +175,17 @@ def harvest_data():
 
 def send_to_db(d):
 
+    temp_logs = d
+
+    d['time'] = str(time.time())
+
     collection_reactivated.insert(d)        
 
 def send_logs(d):
+
+    temp_logs = d
+
+    d['time'] = str(time.time())
 
     collection_logs.insert(d)
 
@@ -190,19 +198,12 @@ while True:
     
     second_harvest = harvest_data()
 
-    temp_logs = second_harvest
-
-    temp_logs['time'] = str(time.time())
-
-    send_logs(temp_logs)
+    send_logs(second_harvest)
 
     if second_harvest != first_harvest:
 
         # Add time
-        temp_d = second_harvest
-
-        temp_d['time'] = str(time.time())
-
+        
         send_embed(second_harvest)
-        send_to_db(temp_d)
+        send_to_db(second_harvest)
         
