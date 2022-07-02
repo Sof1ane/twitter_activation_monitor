@@ -15,7 +15,8 @@ discord_webhook = str(os.environ['DISCORD_WEBHOOK'])
 
 connection_string = str(os.environ['CONNECTION_STRING'])
 db_name = str(os.environ['DB_NAME'])
-collection_name = str(os.environ['COLLECTION_NAME'])
+collection_logs = str(os.environ['COLLECTION_LOGS'])
+collection_reactivated = str(os.environ['COLLECTION_REACTIVATED'])
 
 
 # We'll store the 2 harvested dictionnaries here to compare them 
@@ -31,9 +32,11 @@ starttime = time.time()
 
 client = pymongo.MongoClient(connection_string)
 
-db = client.db_name
+db = client['{}'.format(db_name)]
 
-collection = db.collection_name
+collection_logs = db['{}'.format(collection_logs)]
+
+collection_reactivated = db['{}'.format(collection_reactivated)]
 
 
 # Create the url with the users you chosed and the fields you want the api to return
@@ -172,7 +175,11 @@ def harvest_data():
 
 def send_to_db(d):
 
-    collection.insert(d)              
+    collection_reactivated.insert(d)        
+
+def send_logs(d):
+
+    collection_logs.insert(d)
 
 while True:
     
@@ -181,10 +188,14 @@ while True:
     
     time.sleep(5.0 - ((time.time() - starttime) % 5.0))
     
-    
-    
     second_harvest = harvest_data()
-    
+
+    temp_logs = second_harvest
+
+    temp_logs['time'] = str(time.time())
+
+    send_logs(temp_logs)
+
     if second_harvest != first_harvest:
 
         # Add time
